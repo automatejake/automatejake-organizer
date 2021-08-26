@@ -23,7 +23,7 @@ const formatSeconds = (seconds) => {
 
 const Sessions = () => {
     const [sessions, setSessions] = useState([]);
-    const [session_len, setSessionLength] = useState(600);
+    const [session_len, setSessionLength] = useState(1800);
     const [break_len, setBreakLength] = useState(120);
     const [remainingTime, setRemainingTime] = useState(0);
     const [start,setStart] = useState(Date.now());
@@ -35,11 +35,39 @@ const Sessions = () => {
 
     const toggle = () => {
         setIsActive(!isActive);
-        if (isActive)
+        if (!isActive)
             setStart(Date.now());
-        else
             setRemainingTime(seconds);
         
+    }
+
+    const formatTime = () => {
+        let date = new Date()
+        let todaySeconds = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds()
+       
+        //add seconds
+        let numSessions = sessions.length;
+        for (let i = 0; i < numSessions; i++)
+            console.log(sessions[0].checked)
+
+        let sessionsToComplete = numSessions;
+        let remainingTime = sessionsToComplete * (break_len + session_len) 
+        
+        todaySeconds += remainingTime
+
+        let minutes = Math.floor((todaySeconds/60)%60)
+        let hours = Math.floor(((todaySeconds/60)/60)%24)
+        if (minutes < 10)
+            minutes = "0" + minutes
+        if (hours == 0)
+            return '12:'+minutes + " AM";
+        else if (hours < 12)
+        return hours +':'+minutes + " AM";
+        else if (hours == 12)
+            return hours+':'+minutes + " PM";
+        else 
+            hours %= 12
+            return hours+':'+minutes + " PM";
     }
 
     const changeBreakLength = (newLength) => {
@@ -103,7 +131,7 @@ const Sessions = () => {
         <Container>
             <Grid columns={2}>
                 <Grid.Row>
-                    <Header as='h1'>Complete by</Header>
+                    <Header as='h1'>Complete by {formatTime()}</Header>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={10}>
@@ -150,7 +178,7 @@ const Sessions = () => {
                     </Label>
 
                     <Button onClick={() => { addSession()} } icon>    
-                        <Icon name='plus circle' />
+                        <Icon size='large' name='plus circle' />
                     </Button>
 
                     <Label>
